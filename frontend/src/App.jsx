@@ -1,28 +1,48 @@
-
 import './App.css';
-import { useState, useEffect } from 'react';
-
-//functions
-
-import { getTest } from "./functions/test";
-
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from './components/blog/page/Layout';
+import ErrorPage from './components/blog/page/ErrorPage';
+import PostDetail from './components/blog/page/PostDetail';
+import Home from './components/blog/page/home';
+import CreatePost from './components/blog/page/CreatePost';
+import Register from './components/blog/page/Register';
+import Logout from './components/blog/page/Logout';
+import EditPost from './components/blog/page/EditPost';
+import Login from './components/blog/page/Login';
+import Dashboard from './components/blog/page/Dashboard';
+import AuthorPosts from './components/blog/page/AuthorPosts';
+import CategoryPosts from './components/blog/page/CategoryPosts';
+import Authors from './components/blog/page/Authors';
+import UserProfile from './components/blog/page/UserProfile';
 
 function App() {
-  const [data, setData] = useState("THIS IS MY FIRST REACT");
-
-  useEffect(() => {
-    getTest().then((res) =>{
-      setData(res.message);
-    }).catch((err) => console.log(err));
-
-  },[]);
   return (
-    <div className="App">
-     <h1> {data}</h1>
-      
-     
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<Layout />}
+          fallback={<ErrorPage />}
+        >
+          <Route index element={<Home />} />
+          <Route path="posts/:id" element={<PostDetail />} />
+          <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="profile/:id" element={<UserProfile />} />
+          <Route path="authors" element={<Authors />} />
+          <Route path="create" element={<CreatePost />} />
+          <Route path="posts/categories/:category" element={<CategoryPosts />} />
+          <Route path="posts/users/:id" element={<AuthorPosts />} />
+          <Route path="myposts/:id" element={<Dashboard />} />
+          <Route path="posts/:id/edit" element={<EditPost />} />
+          <Route path="logout" element={<Logout />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 
+ReactDOM.render(<App />, document.getElementById('root'));
 export default App;
