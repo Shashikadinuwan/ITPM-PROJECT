@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Thumbnaill from '../images/blog1.jpg';
-import Thumbnail2 from '../images/blog2.jpg';
-import Thumbnail3 from '../images/blog3.jpg';
-import Thumbnail4 from '../images/blog4.jpg';
+import Thumbnaill from '../page/images/blog1.jpg';
+import Thumbnail2 from '../page/images/blog2.jpg';
+import Thumbnail3 from '../page/images/blog3.jpg';
+import Thumbnail4 from '../page/images/blog4.jpg';
 import PostItem from './PostItem';
 
 const DUMMY_POSTS = [
