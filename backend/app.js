@@ -5,10 +5,20 @@ const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 
+
+const userRoutes = require('./routes/userRoutes')
+const postRoutes = require('./routes/postRoutes')
+
 //app
 const app = express();
+app.use(express.json({extended:true}))
+app.use(express.urlencoded({extended:true}))
+app.use(cors({credentials:true, origin:"http://localhost:3000/"}))
 
-app.listen(5000,()=>console.log("server runing"))
+app.use('/api/users',userRoutes)
+app.use('/api/posts',postRoutes)
+
+app.listen(5000,()=>console.log("server running"))
 
 //db
 
