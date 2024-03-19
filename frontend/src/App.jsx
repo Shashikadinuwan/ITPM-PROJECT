@@ -16,6 +16,7 @@ import AuthorPosts from './components/blog/page/AuthorPosts';
 import CategoryPosts from './components/blog/page/CategoryPosts';
 import Authors from './components/blog/page/Authors';
 import UserProfile from './components/blog/page/UserProfile';
+import DeletePost from './components/blog/page/DeletePost'
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
         <Route
           path="/"
           element={<Layout />}
-          fallback={<ErrorPage />}
+          errorElement={<ErrorPage />}
         >
           <Route index element={<Home />} />
           <Route path="posts/:id" element={<PostDetail />} />
@@ -37,6 +38,7 @@ function App() {
           <Route path="posts/users/:id" element={<AuthorPosts />} />
           <Route path="myposts/:id" element={<Dashboard />} />
           <Route path="posts/:id/edit" element={<EditPost />} />
+          <Route path="posts/:id/delete" element={<DeletePost />} />
           <Route path="logout" element={<Logout />} />
         </Route>
       </Routes>
