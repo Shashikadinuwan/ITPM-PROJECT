@@ -1,10 +1,18 @@
 const {Router} = require('express')
 
-
+const {createPost ,getPost, getPosts , getCatPosts, getUserPosts ,editPost ,
+    deletePost} =require ('../controllers/postControllers')
+ 
+const authMiddleware = require('../middleware/authMiddleware')
+     
 const router = Router()
 
-router.get('/',(req, res, next)=>{
-    res.json("this is user posts")
-})
+router.post('/', authMiddleware,createPost)
+router.get('/:id',getPost)
+router.get('/',getPosts)
+router.get('/categories/:category', getCatPosts)
+router.get('/users/:id',getUserPosts)
+router.patch('/:id',authMiddleware,editPost)
+router.delete('/:id',authMiddleware,deletePost)
 
 module.exports =router
