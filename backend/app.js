@@ -8,6 +8,7 @@ require("dotenv").config();
 
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
+const {notFound, errorHandler} = require('./middleware/errorMiddleware')
 
 //app
 const app = express();
@@ -17,6 +18,9 @@ app.use(cors({credentials:true, origin:"http://localhost:3000/"}))
 
 app.use('/api/users',userRoutes)
 app.use('/api/posts',postRoutes)
+
+app.use(notFound)
+app.use(errorHandler)
 
 app.listen(5000,()=>console.log("server running"))
 
