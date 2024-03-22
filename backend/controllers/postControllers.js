@@ -167,27 +167,34 @@ const editPost = async (req, res, next) => {
         const postId = req.params.id;
         const { title, category, description } = req.body;
 
+        // Validate input data
         if (!title || !category || description.length < 12) {
-            return next(new HttpError("Please fill in all fields", 422));
+            return next(new HttpError("Please provide valid title, category, and description", 422));
         }
 
         let updatedPost;
 
+        // If no files are uploaded, update post without changing thumbnail
         if (!req.files) {
             updatedPost = await Post.findByIdAndUpdate(postId, { title, category, description }, { new: true });
         } else {
+            // Handle file upload
             const oldPost = await Post.findById(postId);
 
+            // Delete old thumbnail
             fs.unlink(path.join(__dirname, '..', 'uploads', oldPost.thumbnail), async (err) => {
                 if (err) {
                     return next(new HttpError(err.message, 500));
                 }
 
                 const { thumbnail } = req.files;
+
+                // Validate file size
                 if (thumbnail.size > 2000000) {
-                    return next(new HttpError("Thumbnail too big", 422));
+                    return next(new HttpError("Thumbnail size exceeds limit", 422));
                 }
 
+                // Generate new filename and move uploaded file
                 const fileName = thumbnail.name;
                 const newFilename = `${uuid()}.${fileName.split('.').pop()}`;
                 thumbnail.mv(path.join(__dirname, '..', 'uploads', newFilename), async (err) => {
@@ -195,6 +202,7 @@ const editPost = async (req, res, next) => {
                         return next(new HttpError(err.message, 500));
                     }
 
+                    // Update post with new thumbnail filename
                     updatedPost = await Post.findByIdAndUpdate(postId, { title, category, description, thumbnail: newFilename }, { new: true });
                     res.status(200).json(updatedPost);
                 });
@@ -202,11 +210,10 @@ const editPost = async (req, res, next) => {
         }
 
     } catch (error) {
+        // Handle any other errors
         return next(new HttpError(error.message, 500));
     }
 };
-
-
 
 
 

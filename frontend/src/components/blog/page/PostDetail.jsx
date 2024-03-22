@@ -1,45 +1,66 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import Loader from './Loader';
+import DeletePost from './DeletePost';
+import { UserContext } from './userContext';
+import axios from 'axios';
 import PostAuthor from './PostAuthor';
-import { Link } from 'react-router-dom';
-import Thumbnail from './images/blog22.jpg'; // Direct import without curly braces
 
 const PostDetail = () => {
+  const { id } = useParams();
+  const [post, setPost] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Initial loading state set to true
+  const { currentUser } = useContext(UserContext);
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/posts/${id}`);
+        setPost(response.data);
+      } catch (error) {
+        setError(error.message); // Set error message instead of error object
+      } finally {
+        setIsLoading(false); // Set loading state to false regardless of success or failure
+      }
+    };
+    getPost();
+  }, [id]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!post) {
+    return <div>No post found</div>;
+  }
+
   return (
-    <section className='post-detail'>
+    <section className="post-detail">
       <div className="container post-detail__container">
-        <div className='post-detail__header'>
-          <PostAuthor/>
-          <div className="post-detial__buttons">
-            <Link to='/posts/werwer/edit' className='btn sm primary'>Edit</Link>
-            <Link to='/posts/werwer/delete' className='btn sm danger'>Delete</Link>
-          </div>
+        <div className="post-detail__header">
+          <PostAuthor authorID={post.creator} createdAt={post.createdAt}/>
+          {currentUser?.id === post?.creator && (
+            <div className="post-detail__buttons">
+              <Link to={`/posts/${id}/edit`} className="btn sm primary"> {/* Use `id` instead of `postId` */}
+                Edit
+              </Link>
+              <DeletePost postId={id} />
+            </div>
+          )}
         </div>
-
-        <h1>this is post title</h1>
+        <h1>{post.title}</h1>
         <div className="post-detail__thumbnail">
-          <img src={Thumbnail} alt="Thumbnail"/>
+          <img src={`${process.env.REACT_APP_ASSETS_URL}/uploads/${post.thumbnail}`} alt="" />
         </div>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi inventore et amet 
-          itaque molestiae rem nemo veniam modi molestias consectetur obcaecati a quae assumenda, unde cumque 
-          illo corporis tenetur? Laboriosam quisquam recusandae distinctio in dolorum atque cumque, assumenda cum illo.
-
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis, dicta? Voluptate unde at corporis distinctio veniam quibusdam inventore, consectetur voluptates? Corporis nulla ut labore commodi veniam sed alias architecto enim saepe unde, provident nam veritatis accusamus, ab quas, velit mollitia quia cupiditate nemo iure blanditiis impedit voluptatibus? Inventore rerum ratione consequatur, tenetur veniam maiores itaque?
-
-        </p>
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quisquam reprehenderit inventore autem laudantium ipsum minima sed ab animi neque enim doloribus praesentium voluptatum, ullam architecto voluptates quos rem nisi veritatis deserunt aut repudiandae quam amet. Rem assumenda ullam accusamus rerum ex ipsum cupiditate? Perferendis harum dignissimos aut minima asperiores animi maiores modi! Nihil, sapiente magnam doloremque in ducimus ipsum ullam quaerat consequuntur veniam! Est ut pariatur quisquam veniam veritatis dicta dolore enim omnis, quaerat voluptatem tenetur quam beatae perferendis fugit debitis possimus? Corrupti assumenda quisquam quae aspernatur modi itaque facilis saepe quibusdam sequi obcaecati, iusto ipsum repellendus accusantium unde ipsa delectus id qui at excepturi quia? Dolorum maiores nostrum repudiandae dolor corrupti!
-
-        </p>
-        <p>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus, rerum voluptatum.
-        </p>
-
+        <p dangerouslySetInnerHTML={{__html: post.description}}></p>
       </div>
     </section>
   );
-}
+};
 
 export default PostDetail;

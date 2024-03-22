@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Avatar from './images/avatar15.jpg';
 import { FaEdit, FaCheck } from "react-icons/fa";
+import { UserContext } from './userContext';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
     const [avatar, setAvatar] = useState(Avatar)// Initialize avatar state
@@ -10,6 +12,17 @@ const UserProfile = () => {
     const [currentPassword, setCurrentPassword] =useState('')
     const [newPassword, setNewPassowrd] =useState('')
     const [confirmnewPassword, setConfirmNewPassowrd] =useState('')
+
+    const { currentUser } = useContext(UserContext);
+    const token = currentUser?.token;
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/login');
+        }
+    }, []);
+
 
     const handleAvatarChange = (e) => {
         setAvatar(e.target.files[0]); // Update avatar state with selected file

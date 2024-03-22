@@ -17,6 +17,7 @@ import CategoryPosts from './components/blog/page/CategoryPosts';
 import Authors from './components/blog/page/Authors';
 import UserProfile from './components/blog/page/UserProfile';
 import DeletePost from './components/blog/page/DeletePost'
+import UserProvider from './components/blog/page/userContext';
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Layout />}
+          element={<UserProvider><Layout /></UserProvider>}
           errorElement={<ErrorPage />}
         >
           <Route index element={<Home />} />
